@@ -102,6 +102,41 @@ public class ServerTest {
         assertEquals("{\"id\":0,\"balance\":999.98}", response.body);
     }
 
+    @Test
+    public void testAsyncTransfer() {
+        Response response = transfer("0", "1", "500.00");
+        assertEquals(200, response.code);
+        assertEquals("{\"status\":\"SUCCESS\"}", response.body);
+
+        Thread t1 = new Thread(() -> {
+            for (int i = 0; i < 100; i++) {
+                transfer("0", "1", "10.00");
+            }
+        });
+
+        Thread t2 = new Thread(() -> {
+            for (int i = 0; i < 100; i++) {
+                transfer("1", "0", "10.00");
+            }
+        });
+        t1.start();
+        t2.start();
+        try {
+            t1.join();
+            t2.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        response = getAccount("1");
+        assertEquals(200, response.code);
+        assertEquals("{\"id\":1,\"balance\":500.00}", response.body);
+
+        response = getAccount("0");
+        assertEquals(200, response.code);
+        assertEquals("{\"id\":0,\"balance\":499.99}", response.body);
+    }
+
     private Response transfer(String from, String to, String sum) {
         Response result = null;
         HttpURLConnection connection;

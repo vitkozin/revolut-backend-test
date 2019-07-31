@@ -51,7 +51,7 @@ public class Server {
                     return gson.toJson(new Response(Status.ERROR, "Transfer should be more than zero"));
                 }
 
-                responseBody = processTransfer(connection, transfer);
+                responseBody = processTransfer(response, connection, transfer);
             } catch (JsonParseException e) {
                 response.status(400);
                 responseBody = gson.toJson(new Response(Status.ERROR, "Incorrect transfer"));
@@ -63,23 +63,27 @@ public class Server {
         });
     }
 
-    private static synchronized String processTransfer(Connection connection, Transfer transfer) throws SQLException {
+    private static synchronized String processTransfer(spark.Response response, Connection connection, Transfer transfer)
+            throws SQLException {
         Gson gson = new Gson();
         long fromId = transfer.from;
         long toId = transfer.to;
 
         Account fromAccount = DAO.getAccount(connection, fromId);
         if (fromAccount == null) {
+            response.status(400);
             return gson.toJson(new Response(Status.ERROR, "Account " + fromId + " not exist"));
         }
         Account toAccount = DAO.getAccount(connection, toId);
         if (toAccount == null) {
+            response.status(400);
             return gson.toJson(new Response(Status.ERROR, "Account " + toId + " not exist"));
         }
 
         BigDecimal sum = transfer.sum;
         boolean notEnoughMoney = fromAccount.balance.compareTo(sum) < 0;
         if (notEnoughMoney) {
+            response.status(400);
             return gson.toJson(new Response(Status.ERROR, "Not enough money"));
         }
 
@@ -108,6 +112,7 @@ public class Server {
                 long id = Long.parseLong(idParam);
                 account = DAO.getAccount(connection, id);
                 if (account == null) {
+                    response.status(404);
                     return gson.toJson(new Response(Status.ERROR, "Account " + idParam + " not exist"));
                 } else {
                     return gson.toJson(account);

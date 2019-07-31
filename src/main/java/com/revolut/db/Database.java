@@ -32,9 +32,8 @@ public class Database {
     }
 
     private void initDefaultValues(Statement statement) {
-        InputStream inputStream = getClass().getResourceAsStream(INIT_SQL);
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-        try {
+        try (InputStream inputStream = getClass().getResourceAsStream(INIT_SQL);
+             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
             String line = bufferedReader.readLine();
             while (line != null) {
                 statement.executeQuery(line);

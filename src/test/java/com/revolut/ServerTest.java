@@ -41,7 +41,7 @@ public class ServerTest {
     public void testNotExistAccount() {
         String id = "2";
         Response response = getAccount(id);
-        assertEquals(200, response.code);
+        assertEquals(404, response.code);
         assertEquals("{\"status\":\"ERROR\",\"message\":\"Account " + 2 + " not exist\"}", response.body);
     }
 
@@ -69,21 +69,21 @@ public class ServerTest {
     @Test
     public void testNotEnoughMoneyTransfer() {
         Response response = transfer("1", "0", "0.01");
-        assertEquals(200, response.code);
+        assertEquals(400, response.code);
         assertEquals("{\"status\":\"ERROR\",\"message\":\"Not enough money\"}", response.body);
     }
 
     @Test
     public void testTransferFromNotExistAccount() {
         Response response = transfer("2", "0", "0.01");
-        assertEquals(200, response.code);
+        assertEquals(400, response.code);
         assertEquals("{\"status\":\"ERROR\",\"message\":\"Account 2 not exist\"}", response.body);
     }
 
     @Test
     public void testTransferToNotExistAccount() {
         Response response = transfer("1", "2", "0.01");
-        assertEquals(200, response.code);
+        assertEquals(400, response.code);
         assertEquals("{\"status\":\"ERROR\",\"message\":\"Account 2 not exist\"}", response.body);
     }
 

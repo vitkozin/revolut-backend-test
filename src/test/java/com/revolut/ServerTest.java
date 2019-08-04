@@ -1,5 +1,6 @@
 package com.revolut;
 
+import com.revolut.services.Service;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -27,7 +28,7 @@ public class ServerTest {
 
     @Before
     public void reloadDatabase() {
-        Server.reloadDatabase();
+        Service.reloadDatabase();
     }
 
     @Test

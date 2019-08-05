@@ -61,7 +61,7 @@ public class Server {
             String idParam = request.params(":id");
             try {
                 long id = Long.parseLong(idParam);
-                account = AccountService.getAccount(id);
+                account = AccountService.getAccount(id, false);
                 return gson.toJson(account);
             } catch (NumberFormatException e) {
                 response.status(400);

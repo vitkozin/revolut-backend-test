@@ -75,6 +75,14 @@ public class ServerTest {
     }
 
     @Test
+    public void testTransferBetweenSameAccount() {
+        Response response = transfer("2", "2", "0.01");
+        assertEquals(400, response.code);
+        assertEquals("{\"status\":\"ERROR\",\"message\":\"Transfer should be between different accounts\"}",
+                response.body);
+    }
+
+    @Test
     public void testTransferFromNotExistAccount() {
         Response response = transfer("2", "0", "0.01");
         assertEquals(400, response.code);
